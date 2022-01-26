@@ -21,7 +21,7 @@ while(true) {
     const move = prompt('enter moves dipshit: ');
 
     for (var i = 0; i < move.length; i++) {
-        switch(move[i]) {
+        switch(move[i].toLowerCase()) {
             case "l":
                 cube.moveLeft();
                 break;
@@ -30,6 +30,16 @@ while(true) {
                 break;
             case "u":
                 cube.moveUp();
+                break;
+            case "d":
+                cube.moveDown();
+                break;
+            case "f":
+                cube.moveFront();
+                break;
+            case "b":
+                cube.moveBack();
+                break;
         }
     }
 
