@@ -21,24 +21,30 @@ while(true) {
     const move = prompt('enter moves dipshit: ');
 
     for (var i = 0; i < move.length; i++) {
+        let numTurns = 1;
+        if (i < move.length - 1) {
+            if (move[i+1] == "'") {
+                numTurns = 3
+            }
+        }
         switch(move[i].toLowerCase()) {
             case "l":
-                cube.moveLeft();
+                cube.moveLeft(numTurns);
                 break;
             case "r":
-                cube.moveRight();
+                cube.moveRight(numTurns);
                 break;
             case "u":
-                cube.moveUp();
+                cube.moveUp(numTurns);
                 break;
             case "d":
-                cube.moveDown();
+                cube.moveDown(numTurns);
                 break;
             case "f":
-                cube.moveFront();
+                cube.moveFront(numTurns);
                 break;
             case "b":
-                cube.moveBack();
+                cube.moveBack(numTurns);
                 break;
         }
     }

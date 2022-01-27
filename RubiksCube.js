@@ -1,19 +1,16 @@
-const colors = {
-    WHITE: "\x1b[47m  \x1b[0m",
-    YELLOW: "\x1b[43m  \x1b[0m",
-    RED: "\x1b[41m  \x1b[0m",
-    ORANGE: "\x1b[45m  \x1b[0m",
-    GREEN: "\x1b[42m  \x1b[0m",
-    BLUE: "\x1b[44m  \x1b[0m",
-    CLEAR: "\x1b[0m  "
-}
+const colors = require("./colors.js");
 
+//////////////////////////////////////////////////////
+//
+//  Rubik's cube class
+//
 module.exports = class RubiksCube { 
     constructor() {
         this.cube = this.initialise();
         this.populateCube();
     }
 
+    // Create an empty grid representing an unfolded cube
     initialise() {
         var arr = [];
         for(let i = 0; i < 12; i++) {
@@ -25,6 +22,7 @@ module.exports = class RubiksCube {
         return arr;
     }
 
+    // Print the contents of the cube
     print() {
         for (let i = 0; i < this.cube.length; i++) {
             for (let j = 0; j < this.cube[i].length; j++) {
@@ -35,7 +33,8 @@ module.exports = class RubiksCube {
             if (i % 3 == 2) process.stdout.write("\n");
         }
     }
-  
+    
+    // Populate the cells of the cube with colours
     populateCube() {
         // initialise GREEN
         for(var i = 0; i < 3; i++) {
@@ -43,15 +42,13 @@ module.exports = class RubiksCube {
                 this.cube[i][j] = colors.GREEN;
             }
         }
-        this.cube[0][3] = colors.YELLOW;
-
+        
         // initialise WHITE
         for(var i = 3; i < 6; i++) {
             for(var j = 3; j < 6; j++) {
                 this.cube[i][j] = colors.WHITE;
             }
         }
-        this.cube[3][3] = colors.YELLOW;
 
         // initialise RED
         for(var i = 3; i < 6; i++) {
@@ -59,7 +56,6 @@ module.exports = class RubiksCube {
                 this.cube[i][j] = colors.RED;
             }
         }
-        this.cube[3][0] = colors.YELLOW;
 
         // initialise BLUE
         for(var i = 6; i < 9; i++) {
@@ -67,15 +63,13 @@ module.exports = class RubiksCube {
                 this.cube[i][j] = colors.BLUE;
             }
         }
-        this.cube[6][3] = colors.YELLOW;
 
-        // initialise ORANGE
+        // initialise ORANGE (Purple)
         for(var i = 3; i < 6; i++) {
             for(var j = 6; j < 9; j++) {
                 this.cube[i][j] = colors.ORANGE;
             }
         }
-        this.cube[3][6] = colors.YELLOW;
 
         // initialise YELLOW
         for(var i = 9; i < 12; i++) {
@@ -83,11 +77,20 @@ module.exports = class RubiksCube {
                 this.cube[i][j] = colors.YELLOW;
             }
         }
-        this.cube[9][3] = colors.WHITE;
+
+        // Uncomment for debug cells
+        // this.cube[0][3] = colors.YELLOW;
+        // this.cube[3][3] = colors.YELLOW;
+        // this.cube[3][0] = colors.YELLOW;
+        // this.cube[6][3] = colors.YELLOW;
+        // this.cube[3][6] = colors.YELLOW;
+        // this.cube[9][3] = colors.WHITE;
     }
 
-
-    // given an (x, y), rotate the face around that position
+    //////////////////////////////////////////////////////
+    //
+    //  Behaviours controlling face turns
+    //
     moveLeft(turns=1) {
         console.log("Moving left");
         for (let i = 0; i < turns; i++) {
@@ -108,11 +111,15 @@ module.exports = class RubiksCube {
     moveUp(turns=1) {
         console.log("Moving up");
         for (let i = 0; i < turns; i++) {
+            // Effectively rotate the whole cube's orientation so up is front
             this.moveRight(3);  
             this.moveLeft();  
-            this.shiftCol(4, 3);  
+            this.shiftCol(4, 3);
+
+            // Rotate the down face which is now at front
             this.moveFront();
 
+            // Rotate whole cube back to original orientation
             this.moveRight();  
             this.moveLeft(3);  
             this.shiftCol(4, -3); 
@@ -122,11 +129,15 @@ module.exports = class RubiksCube {
     moveDown(turns=1) {
         console.log("Moving down");
         for (let i = 0; i < turns; i++) {
+            // Effectively rotate the whole cube's orientation so down is front
             this.moveRight();  
             this.moveLeft(3);  
-            this.shiftCol(4, -3);  
+            this.shiftCol(4, -3);
+
+            // Rotate the down face which is now at front
             this.moveFront();
 
+            // Rotate whole cube back to original orientation
             this.moveRight(3);  
             this.moveLeft();  
             this.shiftCol(4, 3); 
@@ -153,7 +164,7 @@ module.exports = class RubiksCube {
         }
     }
 
-
+    // given an (x, y), rotate the face around that position
     // Rotate a size*size grid centered at x,y clockwise
     rotateFace(x,y, size) {
         //take a copy of the face
@@ -166,8 +177,10 @@ module.exports = class RubiksCube {
             }
         }
 
+        // Rotate the copied grid clockwise 90 degrees
         tmp = rotate90Clockwise(tmp, size);
 
+        // Set the original portion of the cube to the rotated grid
         for (let i = x-N; i <= x+N; i++) {
             for (let j = y-N; j <= y+N; j++) {
                 var tmpCell = tmp[i-x+N][j-y+N]
@@ -202,7 +215,6 @@ function rotate90Clockwise(arr, N) {
         newArr[j] = []
         for (i = N - 1; i >= 0; i--)
             newArr[j][N-i-1] = arr[i][j];
-        
     }
 
     return newArr;
